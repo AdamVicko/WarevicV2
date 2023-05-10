@@ -3,12 +3,12 @@
 session_start();
 define('BP',__DIR__ . DIRECTORY_SEPARATOR);
 define('BP_APP', BP . 'app' . DIRECTORY_SEPARATOR);
-$zaAutoload = [
+$forAutoload = [
     BP_APP . 'controller',
     BP_APP . 'core',
     BP_APP . 'model'
 ];
-$paths = implode(PATH_SEPARATOR, $zaAutoload);
+$paths = implode(PATH_SEPARATOR, $forAutoload);
 set_include_path($paths);
 spl_autoload_register(function($class){
     $paths = explode(PATH_SEPARATOR, get_include_path());
