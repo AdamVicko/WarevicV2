@@ -1,5 +1,5 @@
 -- C:\Users\Adam\xampp\mysql\bin>
--- mysql -uroot --default_character_set=utf8 < C:\Users\Adam\Desktop\Repositories\WarevicV2\dataBase.sql
+-- mysql -uroot --default_character_set=utf8 < C:\Users\Adam\Desktop\Repositories\WarevicV2\WarevicV2.sql
 drop database if exists WarevicV2;
 create database WarevicV2 default charset utf8mb4;
 use WarevicV2;
@@ -33,7 +33,7 @@ create table patient (
 create table oxygenConcentrator(
     id int not null primary key auto_increment,
     serialNumber varchar(255) not null,
-    workingHours decimal(18,2),
+    workingHour decimal(18,2),
     manufacturer varchar(255),
     model varchar(255),
     oxygenConcentratorComment text,
@@ -67,3 +67,10 @@ alter table delivery add foreign key (collection) references collection (id);
 
 alter table collection add foreign key (delivery) references delivery (id);
 alter table collection add foreign key (worker) references worker (id);
+
+insert into person(nameAndSurname,telephone)
+values('Admin Operater', '098/1234567');
+
+insert into worker(person,email,password,role)
+values('1','tito@gmail.com','$2a$12$Zoy8B0nG.8cDiCanaCpVwew3zNDvZMVSBftGVoSdo1fjFxctW0lFS
+','administrator');
