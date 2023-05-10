@@ -11,7 +11,7 @@ class App
         $controller = '';
 
         if(false === isset($parts[0]) || '' === $parts[0]) {
-            $controller='IndexController';
+            $controller='logInController';
         } else {
             $controller = ucfirst($parts[0]) . 'Controller'; 
         }                                                       
@@ -19,7 +19,7 @@ class App
         $method='';
         
         if(false === isset($parts[1]) || '' === $parts[1]) {
-            $method='index';
+            $method='logIn';
         } else {
             $method=$parts[1];
         }
@@ -65,4 +65,10 @@ class App
     {
         return App::config('dev');
     }
+
+    public static function auth()
+    {
+        return isset($_SESSION['auth']);
+    }
+
 }
