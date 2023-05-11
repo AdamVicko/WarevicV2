@@ -11,7 +11,7 @@ class App
         $controller = '';
 
         if(false === isset($parts[0]) || '' === $parts[0]) {
-            $controller='logInController';
+            $controller='LogInController';
         } else {
             $controller = ucfirst($parts[0]) . 'Controller'; 
         }                                                       
@@ -33,7 +33,9 @@ class App
 
         if(false === (class_exists($controller) && method_exists($controller,$method))) {
             $view = new View();
-            $view->render('notFoundPage', []);
+            $view->render('notFoundPage', [
+                'poruka'=>'Not found ' . $controller . '-&gt' . $method
+            ]);
         }
         
         $instance = new $controller();
