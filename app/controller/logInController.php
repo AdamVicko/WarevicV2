@@ -1,30 +1,41 @@
 <?php
 
-class logInController 
+class LogInController 
 {
     protected $view;
 
+    public function __construct()
+    {
+        $this->view = new View();
+    }
+
     public function logIn()
     {
-        $view=new View();
-        $view->render('logIn',[
+        $this->view->render('logIn',[
             'poruka'=>'',
             'email'=>''
         ]);
     }
 
+    public function logOut()
+    {
+        unset($_SESSION['auth']);
+        session_destroy();
+        header('location:' . App::config('url'));
+    }
+
     public function authorization()
     {
-        if(false === isset($_POST['email']) || strlen(trim($_POST['email'])) === 0) {
+        if( false === isset($_POST['email']) || 0 === strlen(trim($_POST['email'])) ) {
             $this->view->render('logIn',
             [
-                'poruka'=>'Enter email!',
+                'poruka'=>'Enter correct email!',
                 'email'=>''
             ]);
             return;
         }
 
-        if(false === isset($_POST['password']) || strlen(trim($_POST['password']))===0) {
+        if(false === isset($_POST['password']) || 0 === strlen(trim($_POST['password'])) ) {
             $this->view->render('logIn',
             [
                 'poruka'=>'Enter correct password!',
@@ -33,10 +44,9 @@ class logInController
             return;
         }
 
-        $worker = Worker::autoriziraj($_POST['email'], $_POST['password']);
+        $worker = Worker::authorize($_POST['email'], $_POST['password']);
 
-        if($worker==null)
-        {
+        if($worker==null) {
             $this->view->render('logIn',[
                 'poruka' =>'Wrong email or password!',
                 'email'=> $_POST['email']
@@ -44,13 +54,9 @@ class logInController
             return;
         }
 
-        //uspjesno prijavljen
         $_SESSION['auth']=$worker;
         header('location:' . App::config('url') . 
-        'wanted/page');
-        
-
+        'oxygenConcentrator/index');
     }
 }
-
 ?>
