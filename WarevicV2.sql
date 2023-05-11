@@ -68,9 +68,9 @@ alter table delivery add foreign key (collection) references collection (id);
 alter table collection add foreign key (delivery) references delivery (id);
 alter table collection add foreign key (worker) references worker (id);
 
-insert into person(nameAndSurname,telephone)
+insert into person(nameAndSurname,phone)
 values('Admin Operater', '098/1234567');
 
 insert into worker(person,email,password,role)
-values('1','tito@gmail.com','$2a$12$Zoy8B0nG.8cDiCanaCpVwew3zNDvZMVSBftGVoSdo1fjFxctW0lFS
+values('1','naser@gmail.com','$2a$12$Zoy8B0nG.8cDiCanaCpVwew3zNDvZMVSBftGVoSdo1fjFxctW0lFS
 ','administrator');
