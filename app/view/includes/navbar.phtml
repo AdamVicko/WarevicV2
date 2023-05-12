@@ -1,1 +1,44 @@
+<?php if(false === App::auth()): ?> 
+   
+<?php else: ?>
+  
+  <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-dark">
+    <div class="container-fluid">
+      <img src="\public\img\wLogoSmall.png" class="img-fluid" style="margin-right: 10px;">
+      <a class="navbar-brand" href="#"><?=App::config('AppName');?></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="<?=App::config('url');?>oxygenConcentrator/index">Oxygen Concentrator</a>
+          </li> 
+              <a class="nav-link" href="">Patients</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Actions</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="">Collection</a></li> 
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="">Delivery</a></li>
+            </ul>
+          </li>
+          <li>
+            
+              <a class="nav-link" href="">Workers</a>
 
+          </li>
+            <?php if(false === App::auth()): //ako nije autoriziran prikazi log in?> 
+              <a class="nav-link" href="<?=App::config('url');?>logIn/logIn">Log in</a>
+            <?php else: ?>
+              <a class="nav-link" href="<?=App::config('url');?>logIn/logOut">Log out
+              <?php echo 'LOGOVAN'?> </a>
+          </li>
+          <?php endif; ?> 
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+<?php endif; ?> 
