@@ -21,4 +21,4 @@ spl_autoload_register(function($class){
     }
 });
 
- App::start();
+App::start();

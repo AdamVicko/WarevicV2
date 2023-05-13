@@ -7,7 +7,7 @@ class Worker
         $veza = DB::getInstance();
         $izraz = $veza->prepare('
         
-        select * from worker where email=:email
+        SELECT * FROM worker WHERE email=:email
         
         ');
         $izraz->execute([
@@ -16,13 +16,11 @@ class Worker
 
         $worker = $izraz->fetch();
 
-        if($worker==null)
-        {
+        if(null === $worker) {
             return null;
         }
 
-        if(!password_verify($password,$worker->password))
-        {
+        if(false === password_verify($password,$worker->password)) {
             return null;
         }
 

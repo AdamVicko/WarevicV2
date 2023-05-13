@@ -5,8 +5,8 @@ class Log
 
     public static function info($sto)
     {
-    var_dump($sto);
-    die();
+        var_dump($sto);
+        die();
     }
 
 }
