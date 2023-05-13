@@ -31,7 +31,7 @@ class App
             $parameter=$parts[2];
         }
 
-        if(false === (class_exists($controller) && method_exists($controller,$method))) {
+        if( false === (class_exists($controller) && method_exists($controller,$method)) ) {
             $view = new View();
             $view->render('notFoundPage', [
                 'poruka'=>'Not found ' . $controller . '-&gt' . $method
@@ -39,7 +39,7 @@ class App
         }
         
         $instance = new $controller();
-        if(strlen($parameter)>0) {
+        if( 0 < strlen($parameter) ) {
             $instance->$method($parameter);
         } else {
             $instance->$method();
@@ -72,5 +72,4 @@ class App
     {
         return isset($_SESSION['auth']);
     }
-
 }
