@@ -5,6 +5,10 @@
     <link rel="stylesheet" href="<?=App::config('url')?>public/css/style.css">
     <link rel="stylesheet" href="<?=App::config('url')?>public/css/bootstrap/bootstrap-icons-1.10.3/bootstrap-icons.css">
     
+    <?php if(isset($css)): ?>
+        <link rel="stylesheet" href="<?=App::config('url')?>public/css/<?=$css?>">
+    <?php endif; ?>
+    
     <title><?=App::config('AppName');?></title>
 
     <?php /*  Essential META Tags https://css-tricks.com/essential-meta-tags-social-media/
