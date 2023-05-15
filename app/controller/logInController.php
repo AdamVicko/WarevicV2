@@ -12,7 +12,7 @@ class LogInController
     public function logIn()
     {
         $this->view->render('logIn',[
-            'poruka'=>'',
+            'message'=>'',
             'email'=>''
         ]);
     }
@@ -29,7 +29,7 @@ class LogInController
         if( false === isset($_POST['email']) || 0 === strlen(trim($_POST['email'])) ) {
             $this->view->render('logIn',
             [
-                'poruka'=>'Enter correct email!',
+                'message'=>'Enter correct email!',
                 'email'=>''
             ]);
             return;
@@ -38,7 +38,7 @@ class LogInController
         if(false === isset($_POST['password']) || 0 === strlen(trim($_POST['password'])) ) {
             $this->view->render('logIn',
             [
-                'poruka'=>'Enter correct password!',
+                'message'=>'Enter correct password!',
                 'email'=>$_POST['email']
             ]);
             return;
@@ -48,7 +48,7 @@ class LogInController
 
         if($worker==null) {
             $this->view->render('logIn',[
-                'poruka' =>'Wrong email or password!',
+                'message' =>'Wrong email or password!',
                 'email'=> $_POST['email']
             ]);
             return;
