@@ -1,0 +1,33 @@
+<div class="d-flex justify-content-center">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <?php if(1 === $page): ?>
+                <li class="page-item disabled">
+                    <a class="page-link"  href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo; Previous</span>
+                    </a>
+                </li>
+            <?php else: ?>
+                <li class="page-item">
+                    <a class="page-link" href="<?=App::config('url')?>oxygenConcentrator/index?page=<?php echo $page-1;?> & condition=<?=$condition?>" aria-label="Previous">
+                        <span aria-hidden="true">&laquo; Previous</span>
+                    </a>
+                </li>
+            <?php endif; ?>
+            <li class="page-item"><a class="page-link" href="#"><?=$page?></a></li>
+            <?php if($last === $page): ?>
+                <li class="page-item disabled">
+                    <a class="page-link"  href="#" aria-label="Next">
+                        <span aria-hidden="true">Next &raquo; </span>
+                    </a>
+                </li>
+            <?php else: ?>
+                <li class="page-item">
+                    <a class="page-link" href="<?=App::config('url')?>oxygenConcentrator/index?page=<?php echo $page+1;?> & condition=<?=$condition?>" aria-label="Next">
+                        <span aria-hidden="true">Next &raquo; </span>
+                    </a>
+                </li>
+            <?php endif; ?>
+        </ul>
+    </nav>
+</div>
