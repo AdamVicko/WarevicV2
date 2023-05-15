@@ -63,6 +63,11 @@ class App
         return $config[$key];
     }
 
+    public static function admin()
+    {
+        return $_SESSION['auth']->role==='administrator';
+    }
+
     public static function dev()
     {
         return App::config('dev');
