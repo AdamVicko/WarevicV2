@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+
 class PatientController
 {
     private $viewPath = 'private'. 
@@ -98,7 +99,7 @@ class PatientController
         );
     }
 
-    public function update($id='')
+    public function update(int $id='')
     {
         if( 'GET' === $_SERVER['REQUEST_METHOD'] ) { 
             if( 0 === strlen(trim($id)) ) {
@@ -140,7 +141,7 @@ class PatientController
         ]);
     }
 
-    public function delete($id=0)
+    public function deleteint(int $id=0)
     {
         $id=(int)$id;
         if(0 === $id)
@@ -152,7 +153,7 @@ class PatientController
         header('location: ' . App::config('url') . 'oxygenConcentrator/index' );
     }
 
-    private function callView($parameters)
+    private function callView(array $parameters)
     {
         $this->view->render($this->viewPath . 
         'new',$parameters);

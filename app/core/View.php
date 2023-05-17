@@ -1,15 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 
 class View{
 
     private $template;
 
-    public function __construct($template='template')
+    public function __construct(string $template='template')
     {
         $this->template = basename($template);
     }
 
-    public function render($name,$args=[])
+    public function render(string $name, array $args=[])
     {
         ob_start();
         extract($args);

@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+
 class OxygenConcentratorController
 {
     private $viewPath = 'private'. 
@@ -49,14 +50,14 @@ class OxygenConcentratorController
         if(isset($_GET['page'])) {
             $page = (int)$_GET['page'];
             if($page < 1) { 
-                $page =1;
+                $page = 1;
             }
         }else {
             $page=1;
         }
         $all = OxygenConcentrator::allOxygen($condition);
         $last = (int)ceil($all/App::config('nrpp')); 
-
+        $last = (0 === $last) ? 1 : $last;
         $this->view->render($this->viewPath . 'index',
         [
             'message' => $message,
@@ -98,7 +99,7 @@ class OxygenConcentratorController
         );
     }
 
-    public function update($id='')
+    public function update(string $id='')
     {
         if( 'GET' === $_SERVER['REQUEST_METHOD'] ) { 
             if( 0 === strlen(trim($id)) ) {
@@ -140,7 +141,7 @@ class OxygenConcentratorController
         ]);
     }
 
-    public function delete($id=0)
+    public function delete(int $id=0)
     {
         $id=(int)$id;
         if(0 === $id)
@@ -152,7 +153,7 @@ class OxygenConcentratorController
         header('location: ' . App::config('url') . 'oxygenConcentrator/index' );
     }
 
-    private function callView($parameters)
+    private function callView(array $parameters)
     {
         $this->view->render($this->viewPath . 
         'new',$parameters);
