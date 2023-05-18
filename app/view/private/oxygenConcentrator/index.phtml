@@ -7,9 +7,9 @@
 </div>
 
 <div class="table-responsive" style="margin: 50px 0 0px 0;">
-    <form action="" method="get">
-        <input type="text" name="con$condition"
-        placeholder="Part of Serial Number" value="<?=$condition?>" >
+    <form action="" method="get" style="margin-bottom: 50px;">
+        <input type="text" name="condition" style="width: 50%;" placeholder="Part of Serial Number" value="<?=$condition?>">
+        <button type="submit">Search</button>
     </form>
     <?php include 'pagination.phtml' ?>
     <table class="table table-dark table-hover" style="margin: 20px 0 20px 0;">
@@ -19,8 +19,9 @@
                 <th scope="col">Working hour's</th>
                 <th scope="col">Manufacturer</th>
                 <th scope="col">Model</th>
-                <th scope="col">Comment</th>
                 <th scope="col">Date of Buying</th>
+                <th scope="col">Patient</th>
+                <th scope="col">Comment</th>
                 <th scope="col">Action</th>
             </tr>
         </thead>
@@ -31,12 +32,14 @@
                     <td><?=$p->workingHour?></td>
                     <td><?=$p->manufacturer?></td>
                     <td><?=$p->model?></td>
+                    <td><?=$p->buyingDate?></td>
+                    <td><?=$p->nameAndSurname?></td>
                     <td>
                         <div class="form-floating">
                             <textarea class="form-control" id="floatingTextarea"><?=$p->oxygenConcentratorComment?></textarea>
                         </div>
                     </td>
-                    <td><?=$p->buyingDate?></td>
+                    
                     <td>
                     <?php if(App::admin()): //ako je auth admin?>
                         <a href="<?=APP::config('url')?>oxygenConcentrator/update/<?=$p->id?>">
