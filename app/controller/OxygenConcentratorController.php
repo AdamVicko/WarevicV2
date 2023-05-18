@@ -18,7 +18,7 @@ class OxygenConcentratorController
     private function initialData()
     {
         $e = new stdClass();
-        $e->id='';
+        $e->id=0;
         $e->serialNumber='';
         $e->workingHour='';
         $e->manufacturer='';
@@ -99,10 +99,11 @@ class OxygenConcentratorController
         );
     }
 
-    public function update(string $id='')
+    public function update(string $id = '')
     {
+        $idLength = strlen($id);
         if( 'GET' === $_SERVER['REQUEST_METHOD'] ) { 
-            if( 0 === strlen(trim($id)) ) {
+            if( 0 === $idLength ) {
                 header('location: ' . App::config('url') . 'logIn/logOut' );
                 return;
             }
@@ -132,8 +133,8 @@ class OxygenConcentratorController
                 ]);
                 return;
             }
-        $this->e->id=$id;
-        OxygenConcentrator::update((array)$this->e);   
+        $id=(int)$id;
+        OxygenConcentrator::update($id, (array)$this->e);   
         $this->view->render($this->viewPath . 
         'update',[
             'e'=>$this->e,
@@ -141,7 +142,7 @@ class OxygenConcentratorController
         ]);
     }
 
-    public function delete(int $id=0)
+    public function delete(string $id='')
     {
         $id=(int)$id;
         if(0 === $id)
