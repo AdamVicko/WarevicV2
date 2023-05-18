@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 class OxygenConcentrator
 {
-    public static function read($condition='',$page=1)
+    public static function read(string $condition='', int $page=1)
     {
 
         $condition = '%' . $condition . '%';
@@ -12,28 +12,33 @@ class OxygenConcentrator
         $connection = DB::getInstance();
         $expression = $connection->prepare('
         
-        SELECT a.id,
-                a.serialNumber,
-                a.workingHour,
-                a.manufacturer,
-                a.model,
-                a.oxygenConcentratorComment,
-                a.buyingDate,
-                b.active AS delivered
+        SELECT 
+            a.id,
+            a.serialNumber,
+            a.workingHour,
+            a.manufacturer,
+            a.model,
+            a.oxygenConcentratorComment,
+            a.buyingDate,
+            e.nameAndSurname,
+            b.active AS delivered
         FROM oxygenConcentrator a
             LEFT JOIN delivery b ON a.id = b.oxygenConcentrator
             LEFT JOIN collection c ON b.collection = c.delivery
-        WHERE a.serialNumber
-        LIKE :condition
-        GROUP BY a.id,
-                a.serialNumber,
-                a.workingHour,
-                a.manufacturer,
-                a.model,
-                a.oxygenConcentratorComment,
-                a.buyingDate,
-                b.active 
-        ORDER BY a.buyingDate ASC LIMIT :start, :nrpp;
+            LEFT JOIN patient d ON b.patient = d.id
+            LEFT JOIN person e ON d.person = e.id
+        WHERE a.serialNumber LIKE :condition
+        GROUP BY 
+            a.id,
+            a.serialNumber,
+            a.workingHour,
+            a.manufacturer,
+            a.model,
+            a.oxygenConcentratorComment,
+            a.buyingDate,
+            e.nameAndSurname,
+            b.active 
+        ORDER BY b.deliveryDate ASC LIMIT :start, :nrpp;
 
         ');
         $expression->bindValue('start',$start, PDO::PARAM_INT); 
@@ -44,7 +49,7 @@ class OxygenConcentrator
         return $expression->fetchAll();
     }
 
-    public static function allOxygen($condition='')
+    public static function allOxygen(string $condition='')
     {
         $condition = '%' . $condition . '%';
         $connection = DB::getInstance();
@@ -57,13 +62,12 @@ class OxygenConcentrator
         LIKE :condition;
         
         ');
-        $expression->execute([
-            'condition'=>$condition
-        ]);
+        $expression->bindValue('condition',$condition);
+        $expression->execute();
         return $expression->fetchColumn();
     }
 
-    public static function create($parameters)
+    public static function create()
     {
         $connection = DB::getInstance();
         $expression = $connection->prepare('
@@ -72,15 +76,21 @@ class OxygenConcentrator
         VALUES(:serialNumber,:workingHour,:manufacturer,:model,:oxygenConcentratorComment,:buyingDate);
 
         ');
-        $expression->execute($parameters);
+        $expression->bindValue('serialNumber',$_POST['serialNumber']);
+        $expression->bindValue('workingHour',$_POST['workingHour']);
+        $expression->bindValue('manufacturer',$_POST['manufacturer']);
+        $expression->bindValue('model',$_POST['model']);
+        $expression->bindValue('oxygenConcentratorComment',$_POST['oxygenConcentratorComment']);
+        $expression->bindValue('buyingDate',$_POST['buyingDate']);
+        $expression->execute();
     }
 
-    public static function update($parameters)
+    public static function update(int $id)
     {
         $connection = DB::getInstance();
         $expression = $connection->prepare('
         
-        UPDATE oxygenConcentrator  SET
+        UPDATE oxygenConcentrator SET
             serialNumber=:serialNumber,
             workingHour=:workingHour,
             manufacturer=:manufacturer,
@@ -88,34 +98,41 @@ class OxygenConcentrator
             oxygenConcentratorComment=:oxygenConcentratorComment,
             buyingDate=:buyingDate 
         WHERE id=:id
-
-
+    
+    
         ');
-        $expression->execute($parameters);
+        $expression->bindValue('serialNumber', $_POST['serialNumber']);
+        $expression->bindValue('workingHour', $_POST['workingHour']);
+        $expression->bindValue('manufacturer', $_POST['manufacturer']);
+        $expression->bindValue('model', $_POST['model']);
+        $expression->bindValue('oxygenConcentratorComment', $_POST['oxygenConcentratorComment']);
+        $expression->bindValue('buyingDate', $_POST['buyingDate']);
+        $expression->bindValue('id', $id);
+        $expression->execute();
     }
 
-    public static function delete($id)
+    public static function delete(int $id)
     {
         $connection = DB::getInstance();
 
-        $expression = $connection->prepare('
+        $deleteDelivery  = $connection->prepare('
         
         DELETE FROM delivery
         WHERE oxygenConcentrator=:id
     
         ');
-        $expression->execute([
-            'id'=>$id
+        $deleteDelivery->execute([
+            'id' => $id
         ]);
 
-        $expression = $connection->prepare('
+        $deleteConcentrator = $connection->prepare('
         
         DELETE FROM oxygenConcentrator
         WHERE id=:id
     
         ');
-        $expression->execute([
-            'id'=>$id
+        $deleteConcentrator->execute([
+            'id' => $id
         ]);
 
     }
@@ -134,7 +151,7 @@ class OxygenConcentrator
         return (int)$id;
     }
     
-    public static function readOne($id)
+    public static function readOne(int $id)
     {
         
         $connection = DB::getInstance();
