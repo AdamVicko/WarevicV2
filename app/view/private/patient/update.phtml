@@ -1,0 +1,54 @@
+<div class="customModal" style="margin-top: 50px;">
+
+    <div class="text-center" style="margin: 100px 0 0 0;">
+        <h1>Update Patient</h1>
+    </div>
+
+    <form class="row g-3" id="registrationForm" action="" method="post">
+    <div class="col-md-6">
+            <label for="nameAndSurname" class="form-label">Name and Surname</label>
+            <input type="text" class="form-control" id="nameAndSurname" 
+                name="nameAndSurname" value="<?=$e->nameAndSurname?>">
+        </div>
+
+        <div class="col-md-6">
+            <label for="phone" class="form-label">Phone</label>
+            <input type="text" class="form-control" id="phone" 
+                name="phone" value="<?=$e->phone?>">
+        </div>
+        <div class="col-md-6">
+            <label for="address" class="form-label">Address</label>
+            <input type="text" class="form-control" id="address" 
+                name="address" value="<?=$e->address?>">
+        </div>
+        <div class="col-md-6">
+            <label for="oib" class="form-label">Oib</label>
+            <input type="text" class="form-control" id="oib" 
+                name="oib" value="<?=$e->oib?>">
+        </div>
+        <div class="col-md-6">
+            <label for="patientComment" class="form-label">Comment</label>
+            <input type="text" class="form-control" id="patientComment" 
+                name="patientComment" value="<?=$e->patientComment?>">
+        </div>
+        <div class="col-md-6">
+            <label for="birthDate" class="form-label">Birth Date</label>
+            <input type="text" class="form-control" id="birthDate" 
+                name="birthDate" value="<?=$e->birthDate?>">
+        </div>
+        <hr>
+        <?=$message?>
+        <div class="row" style="margin-top: 50px;">
+            <div class="d-grid col">
+                <button type="submit" class="btn btn-success" 
+                value="update">Update</button>
+            </div>
+            <div class="d-grid col">
+                <a href="<?=App::config('url')?>patient/index"
+                    class="btn btn-danger">Cancel</a> 
+            </div>
+        </div>
+        
+    </form>
+
+</div>
