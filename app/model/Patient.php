@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 class Patient
 {
-    public static function read($condition='',$page=1)
+    public static function read(string $condition='', int $page=1)
     {
 
         $condition = '%' . $condition . '%';
@@ -51,7 +51,7 @@ class Patient
         return $expression->fetchAll();
     }
 
-    public static function allPatient($condition='')
+    public static function allPatient(string $condition='')
     {
         $condition = '%' . $condition . '%';
         $connection = DB::getInstance();
@@ -64,23 +64,86 @@ class Patient
         WHERE b.nameAndSurname LIKE :condition;
         
         ');
-        $expression->execute([
-            'condition'=>$condition
-        ]);
+        $expression->bindValue('condition',$condition);
+        $expression->execute();
         return $expression->fetchColumn();
     }
 
-    public static function create($parameters)
+    public static function createPerson(array $data)
     {
+        $connection = DB::getInstance();
+        $expression = $connection->prepare('
+        
+        INSERT INTO person (nameAndSurname,phone)
+        VALUES(:nameAndSurname,:phone);
 
+        ');
+        $expression->bindValue(':nameAndSurname', $data['nameAndSurname'], PDO::PARAM_STR);
+        $expression->bindValue(':phone', $data['phone'], PDO::PARAM_STR);
+        $expression->execute();
+    
+        return $connection->lastInsertId();
     }
 
-    public static function update($parameters)
+    public static function updatePerson(array $data)
     {
+        $connection = DB::getInstance();
+        $expression = $connection->prepare('
+        
+        UPDATE person SET
+            nameAndSurname=:nameAndSurname,
+            phone=:phone,
+        WHERE id=:id
 
+        ');
+        $expression->bindValue(':nameAndSurname', $data['nameAndSurname'], PDO::PARAM_STR);
+        $expression->bindValue(':phone', $data['phone'], PDO::PARAM_STR);
+        $expression->execute();
+
+        return $connection->lastInsertId();
     }
 
-    public static function delete($id)
+    public static function createPatient(array $data)
+    {
+        $connection = DB::getInstance();
+        $expression = $connection->prepare('
+        
+        INSERT INTO patient (person,birthDate,address,oib,patientComment)
+        VALUES(:person,:birthDate,:address,:oib,:patientComment);
+
+        ');
+        $expression->bindValue(':person', $data['person'], PDO::PARAM_INT);
+        $expression->bindValue(':birthDate', $data['birthDate'], PDO::PARAM_STR);
+        $expression->bindValue(':address', $data['address'], PDO::PARAM_STR);
+        $expression->bindValue(':oib', $data['oib'], PDO::PARAM_STR);
+        $expression->bindValue(':patientComment', $data['patientComment'], PDO::PARAM_STR);
+        $expression->execute();
+    }
+
+    public static function updatePatient(array $data)
+    {
+        $connection = DB::getInstance();
+        $expression = $connection->prepare('
+        
+        UPDATE patient SET
+            person=:person,
+            birthDate=:birthDate,
+            address=:address,
+            oib=:oib,
+            patientComment=:patientComment
+        WHERE id=:id
+
+
+        ');
+        $expression->bindValue(':person', $data['person'], PDO::PARAM_INT);
+        $expression->bindValue(':birthDate', $data['birthDate'], PDO::PARAM_STR);
+        $expression->bindValue(':address', $data['address'], PDO::PARAM_STR);
+        $expression->bindValue(':oib', $data['oib'], PDO::PARAM_STR);
+        $expression->bindValue(':patientComment', $data['patientComment'], PDO::PARAM_STR);
+        $expression->execute();
+    }
+
+    public static function delete(int $id)
     {
         $connection = DB::getInstance();
 
@@ -120,13 +183,14 @@ class Patient
         return (int)$id;
     }
     
-    public static function readOne($id)
+    public static function readOne(int $id)
     {
         
         $connection = DB::getInstance();
         $expression = $connection->prepare('
         
-            SELECT * FROM patient
+            SELECT * FROM patient a
+            LEFT JOIN person b ON a.person = b.id
             WHERE id=:id
         
         ');
