@@ -19,12 +19,12 @@ class PatientController
     {
         $e = new stdClass();
         $e->id='';
-        $e->serialNumber='';
-        $e->workingHour='';
-        $e->manufacturer='';
-        $e->model='';
-        $e->oxygenConcentratorComment='';
-        $e->buyingDate='';
+        $e->nameAndSurname='';
+        $e->phone='';
+        $e->birthDate='';
+        $e->address='';
+        $e->oib='';
+        $e->patientComment='';
         return $e;
     }
 
@@ -36,7 +36,7 @@ class PatientController
                 case 2:
                     $message=' To add delivery first you need to create Patient!';
                     break;
-                
+
                 default:
                     $message='';
                     break;
@@ -62,7 +62,7 @@ class PatientController
         [
             'message' => $message,
             'data' => Patient::read($condition,$page),
-            'css' => 'oxygenConcentrator.css',
+            'css' => 'patient.css',
             'page' => $page,
             'condition' => $condition,
             'last' => $last
@@ -72,34 +72,33 @@ class PatientController
 
     public function new()
     {
-        if('GET' === $_SERVER['REQUEST_METHOD']) {
-            $this->callView(
-                [
-                    'e'=>$this->initialData(),
-                    'message'=>$this->message
-                ]
-            );
-        }
-        $this->e = (object)$_POST; 
-        if(false === $this->controlNew()) {
-            $this->callView(
-                [
-                    'e'=>$this->e, 
-                    'message'=>$this->message
-                ]
-            );
+        if ('GET' === $_SERVER['REQUEST_METHOD']) {
+            $this->callView([
+                'e' => $this->initialData(),
+                'message' => $this->message
+            ]);
             return;
         }
-        OxygenConcentrator::create((array)$this->e);
-        $this->callView(
-            [
-                'e'=>$this->initialData(),
-                'message'=>'Oxygen Concentrator added successfully!'
-            ]
-        );
+        $this->e = (object) $_POST;
+
+        if (false === ($this->controlNew())) {
+            $this->callView([
+                'e' => $this->e,
+                'message' => $this->message
+            ]);
+            return;
+        }
+        $personId = Patient::createPerson((array) $this->e);
+        $this->e->person = $personId;
+        Patient::createPatient((array) $this->e);
+
+        $this->callView([
+            'e' => $this->initialData(),
+            'message' => 'Patient added successfully!'
+        ]);
     }
 
-    public function update(int $id='')
+    public function update(string $id='')
     {
         if( 'GET' === $_SERVER['REQUEST_METHOD'] ) { 
             if( 0 === strlen(trim($id)) ) {
@@ -111,7 +110,7 @@ class PatientController
                 header('location: ' . App::config('url') . 'logIn/logOut' );
                 return;
             }
-            $this->e = OxygenConcentrator::readOne($id);
+            $this->e = Patient::readOne($id);
             if(null === $this->e) {   
                 header('location: ' . App::config('url') . 'logIn/logOut' );
                 return;
@@ -119,7 +118,7 @@ class PatientController
             $this->view->render($this->viewPath . 
             'update',[
                 'e'=>$this->e,
-                'message'=>'Update data of Oxygen Concentrator!'
+                'message'=>'Update data of Patient!'
             ]);
             return;
         }
@@ -133,7 +132,9 @@ class PatientController
                 return;
             }
         $this->e->id=$id;
-        OxygenConcentrator::update((array)$this->e);   
+        $personId = Patient::updatePerson((array) $this->e);
+        $this->e->person = $personId;
+        Patient::updatePatient((array) $this->e); 
         $this->view->render($this->viewPath . 
         'update',[
             'e'=>$this->e,
@@ -161,81 +162,81 @@ class PatientController
 
     private function controlNew()
     {
-        return $this->controlSerialNumber() && $this->controlWorkingHour() && 
-        $this->controlBuyingDate() && $this->controlModel();
+        return $this->contorlNameAndSurname() && $this->controlOib() && 
+        $this->controlPhone();
     }
 
-    private function controlSerialNumber()
+    private function contorlNameAndSurname()
     {
 
-        $s = $this->e->serialNumber;
+        $s = $this->e->nameAndSurname;
         if( 0 == strlen(trim($s)) )
         {
-            $this->message='Serial number is mandatory!';
+            $this->message='Name and Surname are mandatory!';
             return false;
         }
 
-        if(50 < strlen(trim($s)))
+        if(255 < strlen(trim($s)))
         {
-            $this->message='Must not have more than 50 characters in Serial number!';
-            return false;
-        }
-
-        return true;
-    }
-    private function controlWorkingHour()
-    {
-        $s =$this->e->workingHour; 
-        if( 0 === strlen(trim($s)) )
-        {
-            $this->message='Working hours are mandatory!';
-            return false;
-        }
-
-        if(50 < strlen(trim($s)))
-        {
-            $this->message='Must not have more than 50 characters in Working hours!';
-            return false;
-        }
-        if(0 >= $s)
-        {
-            $this->message='OC Working hours must be greater than zero!';
-            return false;
-        }
-        if( 25000 < $s)
-        {
-            $this->message='OC Working hours must be lower then twentyfive thousand!';
+            $this->message='Must not have more than 255 characters in Name and Surname!';
             return false;
         }
 
         return true;
     }
-    private function controlModel()
-    {
-        $s = $this->e->model;
-        if( 0 === strlen(trim($s)) )
-        {
-            $this->message='Model is mandatory!';
-            return false;
-        }
 
-        if( 20 < strlen(trim($s)) )
-        {
-            $this->message='Must not have more than 20 characters in Model!';
-            return false;
-        }
-
-        return true;
-    }
-    private function controlBuyingDate()
+    private function controlPhone()
     {
 
-        $s = $this->e->buyingDate;
-        if( 0 === strlen(trim($s)) )
+        $s = $this->e->phone;
+        if(0 === strlen(trim($s)))
         {
-            $this->message='Date of buying is mandatory!';
+            $this->message='Patient telephone is mandatory!';
+            return false;
+        }
+
+        if( 255 < strlen(trim($s)))
+        {
+            $this->message='Must not have more than 255 characters in Patient telephone!';
+            return false;
+        }
+
+        return true;
+    }
+
+    private function controlOib()
+    {
+        $oib=$this->e->oib;
+        if (false === (11 === strlen($oib)) || false === (is_numeric($oib))) {
+            $this->message = 'OIB needs to have 11 numbers!';
+            return false;
+        }
+        
+        return true;
+        $a = 10;
+    
+        for ($i = 0; $i < 10; $i++) {
+    
+            $a += (int)$oib[$i];
+            $a %= 10;
+    
+            if ( $a == 0 ) { $a = 10; }
+    
+            $a *= 2;
+            $a %= 11;
+    
+        }
+    
+        $controlNumber = 11 - $a;
+    
+        if (10 === $controlNumber) {$controlNumber = 0; }
+    
+        if(false === ($controlNumber = intval(substr($oib, 10, 1), 10)))
+        {
+            $this->message='OIB is not mathematically correct!';
             return false;
         }
         return true;
     }
+   
 }
