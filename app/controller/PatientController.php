@@ -98,51 +98,80 @@ class PatientController
         ]);
     }
 
-    public function update(string $id='')
+    public function update(string $id = '')
     {
-        if( 'GET' === $_SERVER['REQUEST_METHOD'] ) { 
-            if( 0 === strlen(trim($id)) ) {
-                header('location: ' . App::config('url') . 'logIn/logOut' );
+        if ('GET' === $_SERVER['REQUEST_METHOD']) {
+            if (0 === strlen(trim($id))) {
+                header('location: ' . App::config('url') . 'logIn/logOut');
                 return;
             }
-            $id=(int)$id;
-            if(0 === $id) {
-                header('location: ' . App::config('url') . 'logIn/logOut' );
+            $id = (int)$id;
+            if (0 === $id) {
+                header('location: ' . App::config('url') . 'logIn/logOut');
                 return;
             }
-            $this->e = Patient::readOne($id);
-            if(null === $this->e) {   
-                header('location: ' . App::config('url') . 'logIn/logOut' );
+            $this->e = Patient::readOnePatient($id);
+            $person = Patient::readOnePerson($this->e->person);
+            if (null === $this->e || null === $person) {
+                header('location: ' . App::config('url') . 'logIn/logOut');
                 return;
             }
-            $this->view->render($this->viewPath . 
-            'update',[
-                'e'=>$this->e,
-                'message'=>'Update data of Patient!'
+            $this->view->render($this->viewPath . 'update', [
+                'e' => $this->e,
+                'person' => $person,
+                'message' => 'Update data of Patient!'
             ]);
             return;
-        }
-        $this->e = (object)$_POST;
-        if(false === $this->controlNew()) {
-                $this->view->render($this->viewPath . 
-                'update',[
-                    'e'=>$this->e,
-                    'message'=>$this->message
+        } else {
+            $this->e = (object)$_POST;
+            if (false === $this->controlNew()) {
+                $this->view->render($this->viewPath . 'update', [
+                    'e' => $this->e,
+                    'message' => $this->message
                 ]);
                 return;
+            } else {
+                $this->e->id = $id;
+                $id = (int)$id;
+                $currentPatient = Patient::readOnePatient($id);
+                $personId = $currentPatient->person;
+
+                $personUpdated = Patient::updatePerson([
+                    'id' => $personId,
+                    'nameAndSurname' => $this->e->nameAndSurname,
+                    'phone' => $this->e->phone
+                ]);
+
+                if ($personUpdated) {
+                    Patient::updatePatient([
+                        'id' => $this->e->id,
+                        'person' => $personId,
+                        'birthDate' => $this->e->birthDate,
+                        'address' => $this->e->address,
+                        'oib' => $this->e->oib,
+                        'patientComment' => $this->e->patientComment
+                    ]);
+                    $updatedPatient = Patient::readOnePatient($id);
+                    $updatedPerson = Patient::readOnePerson($personId);
+                    $this->view->render($this->viewPath . 'update', [
+                        'e' => $updatedPatient,
+                        'person' => $updatedPerson,
+                        'message' => 'Update data of Patient!'
+                    ]);
+                    return;
+                }
             }
-        $this->e->id=$id;
-        $personId = Patient::updatePerson((array) $this->e);
-        $this->e->person = $personId;
-        Patient::updatePatient((array) $this->e); 
-        $this->view->render($this->viewPath . 
-        'update',[
-            'e'=>$this->e,
-            'message'=>'Update complete!'
+        }    
+        $this->message = 'Failed to update person information.';
+        $person = Patient::readOnePerson($this->e->person);
+        $this->view->render($this->viewPath . 'update', [
+            'e' => $this->e,
+            'person' => $person,
+            'message' => $this->message
         ]);
     }
 
-    public function deleteint(int $id=0)
+    public function delete(int $id=0)
     {
         $id=(int)$id;
         if(0 === $id)
