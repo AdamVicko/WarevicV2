@@ -69,8 +69,22 @@ alter table collection add foreign key (delivery) references delivery (id);
 alter table collection add foreign key (worker) references worker (id);
 
 insert into person(nameAndSurname,phone)
-values('Admin Operater', '098/1234567');
+values('Admin Operater', '098/1234567'),
+('Test Patient', 'TEST'),
+('Test 2', 'TEST2');
 
 insert into worker(person,email,password,role)
 values('1','naser@gmail.com','$2a$12$Zoy8B0nG.8cDiCanaCpVwew3zNDvZMVSBftGVoSdo1fjFxctW0lFS
 ','administrator');
+
+insert into patient(person)
+values('2'),('3');
+
+insert into oxygenConcentrator(serialNumber)
+values('BK77877'),('BK77s877'),('value1'),('value2'),('value3'),('value4'),('value5'),('value6'),('value7'),('value8'),('value9'),('value10');
+
+insert into delivery(oxygenConcentrator,patient,worker,active)
+values('1', '1','1','0');
+
+/*insert into collection(worker,delivery)
+values('1', '1');*/
