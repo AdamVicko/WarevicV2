@@ -89,18 +89,17 @@ class Patient
     {
         $connection = DB::getInstance();
         $expression = $connection->prepare('
-        
-        UPDATE person SET
-            nameAndSurname=:nameAndSurname,
-            phone=:phone,
-        WHERE id=:id
-
+            UPDATE person SET
+                nameAndSurname = :nameAndSurname,
+                phone = :phone
+            WHERE id = :id
         ');
+
         $expression->bindValue(':nameAndSurname', $data['nameAndSurname'], PDO::PARAM_STR);
         $expression->bindValue(':phone', $data['phone'], PDO::PARAM_STR);
-        $expression->execute();
+        $expression->bindValue(':id', $data['id'], PDO::PARAM_INT);
 
-        return $connection->lastInsertId();
+        $expression->execute();
     }
 
     public static function createPatient(array $data)
@@ -124,22 +123,20 @@ class Patient
     {
         $connection = DB::getInstance();
         $expression = $connection->prepare('
-        
-        UPDATE patient SET
-            person=:person,
-            birthDate=:birthDate,
-            address=:address,
-            oib=:oib,
-            patientComment=:patientComment
-        WHERE id=:id
-
-
+            UPDATE patient SET
+                birthDate = :birthDate,
+                address = :address,
+                oib = :oib,
+                patientComment = :patientComment
+            WHERE id = :id
         ');
-        $expression->bindValue(':person', $data['person'], PDO::PARAM_INT);
+    
         $expression->bindValue(':birthDate', $data['birthDate'], PDO::PARAM_STR);
         $expression->bindValue(':address', $data['address'], PDO::PARAM_STR);
         $expression->bindValue(':oib', $data['oib'], PDO::PARAM_STR);
         $expression->bindValue(':patientComment', $data['patientComment'], PDO::PARAM_STR);
+        $expression->bindValue(':id', $data['id'], PDO::PARAM_INT);
+    
         $expression->execute();
     }
 
@@ -183,19 +180,31 @@ class Patient
         return (int)$id;
     }
     
-    public static function readOne(int $id)
+    public static function readOnePatient(int $id)
     {
         
         $connection = DB::getInstance();
         $expression = $connection->prepare('
         
-            SELECT * FROM patient a
-            LEFT JOIN person b ON a.person = b.id
+            SELECT * FROM patient
             WHERE id=:id
         
         ');
         $expression->execute([
             'id'=>$id
+        ]);
+        return $expression->fetch();
+    }
+
+    public static function readOnePerson(int $person)
+    {
+        $connection = DB::getInstance();
+        $expression = $connection->prepare('
+            SELECT * FROM person 
+            WHERE id=:person
+        ');
+        $expression->execute([
+            'person' => $person
         ]);
         return $expression->fetch();
     }
